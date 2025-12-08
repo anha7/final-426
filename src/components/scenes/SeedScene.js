@@ -45,16 +45,20 @@ class SeedScene extends Scene {
         const { rotationSpeed, updateList } = this.state;
         // this.rotation.y = (rotationSpeed * timeStamp) / 10000;
 
+        // Get reference to cat
+        const cat = this.getObjectByName('cat');
+        // Ensure cat gets set of collidable objects
+        if (cat && this.generator) {
+            cat.collidableObjects = this.generator.collidableObjects;
+        }
+
         // Call update for each object in the updateList
         for (const obj of updateList) {
             obj.update(timeStamp);
         }
 
-        // Update terrain based on cat's position
-        const cat = this.getObjectByName('cat');
-        if (cat && this.generator) {
-            this.generator.update(cat.position);
-        }
+        // Generate chunks of terrain based on cat's position
+        if (cat && this.generator) this.generator.update(cat.position);
     }
 }
 

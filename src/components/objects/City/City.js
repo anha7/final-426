@@ -26,7 +26,7 @@ class City extends Group {
         // objects from city assets
         this.buildings = {};
         this.vehicles = {};
-        this.foliage = {};
+        this.decor = {};
         this.road = {};
         this.street = {};
         this.lights = {};
@@ -41,8 +41,6 @@ class City extends Group {
                 'cinema_29',
                 'coffe_shop_30',
                 'fire_station_31',
-                'gas_station_33',
-                'gas_station_shop_34',
                 'green_house_35',
                 'hotel_36',
                 'market_37',
@@ -64,23 +62,12 @@ class City extends Group {
                 'taxi_50',
                 'truck_51'
             ],
-            // Different foliage
-            foliage: [
+            // Different decor (foliage + street furniture)
+            decor: [
                 'bush_3',
                 'tree_1_19',
                 'tree_2_20',
-                'tree_3_21'
-            ],
-            // Different road elements
-            road: [
-                'road_13',
-                'road_black_14',
-                'road_black_zebra_crossing_15',
-                'sidewalk_26',
-                'grass_8'
-            ],
-            // Different street furniture
-            street: [
+                'tree_3_21',
                 'barrier_0',
                 'bench_1',
                 'bin_2',
@@ -95,7 +82,14 @@ class City extends Group {
                 'table_18',
                 'umbrella_22',
                 'bus_stop_sign_23',
-                'gas_sign_32'
+            ],
+            // Different road elements
+            road: [
+                'road_13',
+                'road_black_14',
+                'road_black_zebra_crossing_15',
+                'sidewalk_26',
+                'grass_8'
             ],
             // Different traffic lights
             lights: [
@@ -117,26 +111,27 @@ class City extends Group {
             gltf.scene.traverse((object) => {
                 // Look for different buildings
                 if (this.assets.buildings.includes(object.name)) { 
+                    object.scale.set(5, 5, 5);
                     this.buildings[object.name] = object;
                 }
                 // Look for different vehicles
                 if (this.assets.vehicles.includes(object.name)) {
+                    object.scale.set(5, 5, 5);
                     this.vehicles[object.name] = object;
                 }
-                // Look for different foliage
-                if (this.assets.foliage.includes(object.name)) {
-                    this.foliage[object.name] = object;
+                // Look for different decor (foliage + street furtniture)
+                if (this.assets.decor.includes(object.name)) {
+                    object.scale.set(5, 5, 5);
+                    this.decor[object.name] = object;
                 }
                 // Look for different road elements
                 if (this.assets.road.includes(object.name)) {
+                    object.scale.set(5, 5, 5);
                     this.road[object.name] = object;
-                }
-                // Look for different street furnitures
-                if (this.assets.street.includes(object.name)) {
-                    this.street[object.name] = object;
                 }
                 // Look for different traffic lights
                 if (this.assets.lights.includes(object.name)) {
+                    object.scale.set(5, 5, 5);
                     this.lights[object.name] = object;
                 }
             });
@@ -169,13 +164,9 @@ class City extends Group {
     getRandomVehicle() {
         return this.randomObject(this.vehicles);
     }
-    // Get a random foliage
-    getRandomFoliage() {
-        return this.randomObject(this.foliage);
-    }
-    // Get a random street item
-    getRandomStreetItem() {
-        return this.randomObject(this.street);
+    // Get a random decor
+    getRandomDecor() {
+        return this.randomObject(this.decor);
     }
     // Get random street lights
     getRandomStreetLight() {

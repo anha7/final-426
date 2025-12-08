@@ -16,7 +16,7 @@ const camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
 
 // Set up camera
-camera.position.set(0, 8, -10);
+camera.position.set(0, 3.5, -15);
 
 // Set up renderer, canvas, and minor CSS adjustments
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -39,17 +39,12 @@ const onAnimationFrameHandler = (timeStamp) => {
     // Make camera follow cat
     const cat = scene.getObjectByName('cat');
     if (cat) {
-        // OrbitControls will orbit around cat
+        // Configure OrbitControls to follow cat
         controls.target.set(
             cat.position.x,
             cat.position.y,
             cat.position.z
         );
-
-        // // Position camera behind cat, ensure camera looks at cat
-        // camera.position.x = cat.position.x;
-        // camera.position.y = cat.position.y + 10;
-        // camera.position.z = cat.position.z - 10;
     }
 
     controls.update();
