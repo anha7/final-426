@@ -47,8 +47,7 @@ class City extends Group {
                 'market_37',
                 'pizzeria_38',
                 'police_station_39',
-                'yellow_house_40',
-                'hospital_41'
+                'yellow_house_40'
             ],
             // Different vehicles
             vehicles: [

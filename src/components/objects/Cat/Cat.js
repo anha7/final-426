@@ -62,13 +62,16 @@ class Cat extends Group {
         // Check if model exists
         if (!this.model) return false;
 
-        // Create a hit box to test potential collision
-        const hitBox = new Box3().setFromObject(this.model);
-        // Calculate offset from cat's current pos to potential new pos
-        const xOffset = x - this.position.x;
-        const zOffset = z - this.position.z;
-        // Apply offset to temp hit box
-        hitBox.translate(new Vector3(xOffset, 0, zOffset));
+        // Create cat's hit box to test for collisions
+        // We need a hit box that is rotation independent, so we will
+        // create a manual box based on size of cat
+        // const box = new Box3().setFromObject(this.model);
+        // console.log("Cat size:", box.getSize(new Vector3()));
+        const halfCatSize = 1.1;
+        const hitBox = new Box3(
+            new Vector3(x - halfCatSize, 0, z - halfCatSize),
+            new Vector3(x + halfCatSize, 2, z + halfCatSize)
+        );
 
         // Loop through every object in set of collidable objects
         for (const object of this.collidableObjects) {
@@ -105,6 +108,13 @@ class Cat extends Group {
             if (!this.checkCollisions(x, z)) {
                 this.position.x = x;
                 this.position.z = z;
+            } else {
+                if (!this.checkCollisions(x, this.position.z)) {
+                    this.position.x = x;
+                }
+                if (!this.checkCollisions(this.position.x, z)) {
+                    this.position.z = z;
+                }
             }
         }
     }
