@@ -30,6 +30,7 @@ class City extends Group {
         this.road = {};
         this.street = {};
         this.lights = {};
+        this.fence = null;
 
         // Define assets from city scene to look out for when traversing
         // through scene and organizing assets
@@ -68,7 +69,6 @@ class City extends Group {
                 'tree_1_19',
                 'tree_2_20',
                 'tree_3_21',
-                'barrier_0',
                 'bench_1',
                 'bin_2',
                 'chair_5',
@@ -97,7 +97,8 @@ class City extends Group {
                 'light_red_11',
                 'car_light_green_24',
                 'light_green_25'
-            ]
+            ],
+            fence: 'barrier_0'
         };
 
         // Initialize loader
@@ -133,6 +134,11 @@ class City extends Group {
                 if (this.assets.lights.includes(object.name)) {
                     object.scale.set(5, 5, 5);
                     this.lights[object.name] = object;
+                }
+                // Look for fence
+                if (this.assets.fence === object.name) {
+                    object.scale.set(44.7, 5, 5)
+                    this.fence = object;
                 }
             });
 

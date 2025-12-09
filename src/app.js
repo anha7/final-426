@@ -46,6 +46,8 @@ const onAnimationFrameHandler = (timeStamp) => {
             cat.position.z
         );
     }
+    // Ensure camera doesn't go below origin
+    if (camera.position.y < 1) camera.position.y = 1;
 
     controls.update();
     renderer.render(scene, camera);

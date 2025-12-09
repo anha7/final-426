@@ -2,7 +2,7 @@
 // Cat will extend Three.js Group, so it's a container that can
 // be added to the scene
 // https://threejs.org/docs/#Group
-import { Group, Box3 } from 'three';
+import { Group, Box3, Vector3 } from 'three';
 // Will use Three.js' loader to parse the city scene GLTF file
 // https://threejs.org/docs/#GLTFLoader
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -34,14 +34,10 @@ class Cat extends Group {
             a: false,
             s: false,
             d: false,
-        }
+        };
 
         // Set movement speed of cat
         this.speed = 0.4;
-        // Track cat's hit box (null for now)
-        this.hitBox = null;
-        // Add padding to hit box
-        this.padding = 0.1;
         // Track objects cat can collide width
         this.collidableObjects = [];
 
@@ -58,35 +54,26 @@ class Cat extends Group {
         });
     }
 
-    // Instance method for updating cat's hit box
-    updateHitBox() {
+    // Instance method to check if cat's proposed new position collides
+    // with objects in scene
+    checkCollisions(x, z) {
         // Check if model exists
-        if (!this.model) return;
+        if (!this.model) return false;
 
-        // If hit box doesn't exist yet, create one
-        if (!this.hitBox) {
-            this.hitBox = new Box3();
-        }
-
-        // Calculate cat's hit box from object's geometry
-        this.hitBox.setFromObject(this.model);
-        // Expand hit box to account for padding
-        this.hitBox.expandByScalar(this.padding);
-    }
-
-    // Instance method to check if cat collides with objects in scene
-    checkCollisions() {
-        // Check if cat's hit box / model exists
-        if (!this.hitBox || !this.model) return false;
+        // Create a hit box to test potential collision
+        const hitBox = new Box3().setFromObject(this.model);
+        // Calculate offset from cat's current pos to potential new pos
+        const xOffset = x - this.position.x;
+        const zOffset = z - this.position.z;
+        // Apply offset to temp hit box
+        hitBox.translate(new Vector3(xOffset, 0, zOffset));
 
         // Loop through every object in set of collidable objects
         for (const object of this.collidableObjects) {
             // Create a hit box for current object
             const objectHitBox = new Box3().setFromObject(object);
-            objectHitBox.expandByScalar(this.padding);
-
-            // Return first collision we find
-            if (this.hitBox.intersectsBox(objectHitBox)) return true;
+            // Check for collisions, returning first collision we find
+            if (hitBox.intersectsBox(objectHitBox)) return true;
         }
 
         // No collisions found, return false
@@ -99,40 +86,32 @@ class Cat extends Group {
         let deltaX = 0;
         let deltaZ = 0;
 
-        // Movement updates
+        // How much we want to move is determined by WASD interactions
         if (this.keys.w) deltaZ += this.speed;
         if (this.keys.a) deltaX += this.speed;
         if (this.keys.s) deltaZ -= this.speed;
         if (this.keys.d) deltaX -= this.speed;
 
-        //  Check if movement along x-axis is inhibited by object
+        // Check if movement along x-axis incurs collision
+        // If so, do not move the cat
         if (deltaX !== 0) {
-            // Temporarily move to test collisions
-            this.position.x += deltaX;
-            this.updateHitBox();
-
-            // Check if it would cause a collision
-            const collision = this.checkCollisions();
-
-            // Revert movement if there's collision
-            if (collision) this.position.x -= deltaX;
+            // Get cat's potential x position
+            const x = this.position.x + deltaX;
+            // If movement doesn't cause collision, actually move
+            if (!this.checkCollisions(x, this.position.z)) {
+                this.position.x = x;
+            }
         }
 
-        //  Check if movement along z-axis is inhibited by object
+        // Check if movement along z-axis incurs collision
         if (deltaZ !== 0) {
-            // Temporarily move to test collisions
-            this.position.z += deltaZ;
-            this.updateHitBox();
-
-            // Check if it would cause a collision
-            const collision = this.checkCollisions();
-
-            // Revert movement if there's collision
-            if (collision) this.position.z -= deltaZ;
+            // Get cat's potential z position
+            const z = this.position.z + deltaZ;
+            // If movement doesn't cause collision, actually move
+            if (!this.checkCollisions(this.position.x, z)) {
+                this.position.z = z;
+            }
         }
-
-        // Do a final hitbox update
-        this.updateHitBox();
     }
 }
 
