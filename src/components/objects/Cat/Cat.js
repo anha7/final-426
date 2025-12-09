@@ -38,6 +38,8 @@ class Cat extends Group {
 
         // Set movement speed of cat
         this.speed = 0.4;
+        // Set rotation speed of cat
+        this.rotationSpeed = 0.1;
         // Track objects cat can collide width
         this.collidableObjects = [];
 
@@ -82,33 +84,26 @@ class Cat extends Group {
 
     // Instance method for updating cat's movement
     update() {
-        // Store how much we want to move
-        let deltaX = 0;
-        let deltaZ = 0;
+        // Rotation is determined by A/D interactions
+        if (this.keys.a) this.rotation.y += this.rotationSpeed;
+        if (this.keys.d) this.rotation.y -= this.rotationSpeed;
 
-        // How much we want to move is determined by WASD interactions
-        if (this.keys.w) deltaZ += this.speed;
-        if (this.keys.a) deltaX += this.speed;
-        if (this.keys.s) deltaZ -= this.speed;
-        if (this.keys.d) deltaX -= this.speed;
+        // Store how much we want to move
+        let dist = 0;
+        // How much we want to move is determined by W/D interactions
+        if (this.keys.w) dist += this.speed;
+        if (this.keys.s) dist -= this.speed;
 
         // Check if movement along x-axis incurs collision
         // If so, do not move the cat
-        if (deltaX !== 0) {
-            // Get cat's potential x position
-            const x = this.position.x + deltaX;
-            // If movement doesn't cause collision, actually move
-            if (!this.checkCollisions(x, this.position.z)) {
-                this.position.x = x;
-            }
-        }
+        if (dist !== 0) {
+            // Get cat's potential position based on rotation
+            const x = this.position.x + Math.sin(this.rotation.y) * dist;
+            const z = this.position.z + Math.cos(this.rotation.y) * dist;
 
-        // Check if movement along z-axis incurs collision
-        if (deltaZ !== 0) {
-            // Get cat's potential z position
-            const z = this.position.z + deltaZ;
             // If movement doesn't cause collision, actually move
-            if (!this.checkCollisions(this.position.x, z)) {
+            if (!this.checkCollisions(x, z)) {
+                this.position.x = x;
                 this.position.z = z;
             }
         }

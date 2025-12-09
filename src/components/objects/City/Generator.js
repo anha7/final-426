@@ -17,8 +17,6 @@ class Generator extends Group {
         this.viewDistance = 15; // Will be able to see terain 15 squares
         // ahead and behind
         this.assetManager = assetManager; // City assets manager
-        this.lastCatPosition = { x: 0, z: 0 }; // Last cat position,
-        // initialized to origin
         this.collidableObjects = []; // Holds all collidable objects,
         // used to check for collisions
     }
