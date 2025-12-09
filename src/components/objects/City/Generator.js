@@ -114,14 +114,14 @@ class Generator extends Group {
         const rightBuilding = this.assetManager.getRandomBuilding(
             this.assetManager.buildings
         );
-        rightBuilding.position.set(worldX - 47.45, 0, worldZ);
+        rightBuilding.position.set(worldX - 55, 0, worldZ);
         rightBuilding.rotation.y = Math.PI / 2;
 
         // Building on left side
         const leftBuilding = this.assetManager.getRandomBuilding(
             this.assetManager.buildings
         );
-        leftBuilding.position.set(worldX + 47.45, 0, worldZ);
+        leftBuilding.position.set(worldX + 55, 0, worldZ);
         leftBuilding.rotation.y = (3 * Math.PI) / 2;
 
         // Add to set of assets and collidable objects
@@ -133,14 +133,14 @@ class Generator extends Group {
         // Add fences throughout building to indicate world barrier
         // Barrier on right side
         const rightBarrier = this.assetManager.fence.clone();
-        rightBarrier.position.set(worldX - 50, 0, worldZ);
+        rightBarrier.position.set(worldX - 60, 0, worldZ);
         rightBarrier.rotation.y = Math.PI / 2;
         // const box = new Box3().setFromObject(rightBarrier);
         // console.log("Fence size:", box.getSize(new Vector3()));
 
         // Barrier on left side
         const leftBarrier = this.assetManager.fence.clone();
-        leftBarrier.position.set(worldX + 50, 0, worldZ);
+        leftBarrier.position.set(worldX + 60, 0, worldZ);
         leftBarrier.rotation.y = (3 * Math.PI) / 2;
 
         // Add to set of assets and collidable objects

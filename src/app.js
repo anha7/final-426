@@ -16,7 +16,7 @@ const camera = new PerspectiveCamera();
 const renderer = new WebGLRenderer({ antialias: true });
 
 // Set up camera
-camera.position.set(0, 3.5, -15);
+camera.position.set(0, 8, -30);
 
 // Set up renderer, canvas, and minor CSS adjustments
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -42,7 +42,7 @@ const onAnimationFrameHandler = (timeStamp) => {
         // Configure OrbitControls to follow cat
         controls.target.set(
             cat.position.x,
-            cat.position.y,
+            6,
             cat.position.z
         );
     }
