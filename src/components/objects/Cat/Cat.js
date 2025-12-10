@@ -1,17 +1,9 @@
 // Imports
-// Cat will extend Three.js Group, so it's a container that can
-// be added to the scene
-// https://threejs.org/docs/#Group
 import { Group, Box3, Vector3, AnimationMixer } from 'three';
-// Will use Three.js' loader to parse the city scene GLTF file
-// https://threejs.org/docs/#GLTFLoader
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-// Import cat assets
 import MODEL from './cat.glb';
 
-// This class manages cat model
-// We'll load the cat model from the gltf file
-// We'll also manage the cat animations
+// This class manages the cat model
 class Cat extends Group {
     constructor() {
         // Cat extends Three.js Group
@@ -40,19 +32,20 @@ class Cat extends Group {
             };
 
             // Set animation instance variables
-            this.animationStart = null;
-            this.animationEnd = null;
-
-            this.playAnimation('idle');
+            this.start = null;
+            this.end = null;
+            this.currentAnimation = null;
+            // Default animation is idle
+            this.play('idle');
         });
 
-        // We'll be using WASD to move the cat
+        // We'll be using WASD to move the cat, shift to run
         this.keys = {
             w: false,
             a: false,
             s: false,
             d: false,
-            shift: false
+            shift: false,
         };
 
         // Set movement speed of cat
@@ -62,13 +55,12 @@ class Cat extends Group {
         // Track objects cat can collide width
         this.collidableObjects = [];
 
-        // Add keyboard event listeners
+        // Add keyboard event listeners for movement
         window.addEventListener('keydown', (e) => {
             const key = e.key.toLowerCase();
             // Mark whether WASD and/or shift is pressed
             if (key in this.keys) this.keys[key] = true;
             this.keys.shift = e.shiftKey;
-
         });
         window.addEventListener('keyup', (e) => {
             // If pressed key is WASD, flag movement
@@ -80,19 +72,24 @@ class Cat extends Group {
     }
 
     // Instance method to play an animation
-    playAnimation(animation) {
+    play(animation) {
         // Check if animation and time range exists
         if (!this.animation || !this.ranges[animation]) return;
-
         // If this animation is already playing, return
         if (this.currentAnimation === animation) return;
 
         // Stop current animation
         this.animation.stop();
 
-        // Set animation start to new animation's start
+        // Set start of animation to new animation's start
         const range = this.ranges[animation];
         this.animation.time = range.start;
+        // Set instance variables of animation
+        this.currentAnimation = animation;
+        // Range instance variables important for looping the animation
+        // in update()
+        this.start = range.start;
+        this.end = range.end;
 
         // Increase speed of run animation
         if (animation === 'run') this.animation.timeScale = 1.5;
@@ -100,13 +97,6 @@ class Cat extends Group {
 
         // Play new animation
         this.animation.play();
-
-        // Set instance variables of cat
-        this.currentAnimation = animation;
-        // Range instance variables important for looping the animation
-        // in update()
-        this.animationStart = range.start;
-        this.animationEnd = range.end;
     }
 
     // Instance method to check if cat's proposed new position collides
@@ -151,55 +141,48 @@ class Cat extends Group {
             this.mixer.update(delta);
 
             // When animation reaches end, loop it to start
-            if (this.animation && this.animationStart !== null) {
-                if (this.animation.time >= this.animationEnd) {
-                    this.animation.time = this.animationStart;
-                }
-            }
+            if (
+                this.animation &&
+                this.start !== null &&
+                this.animation.time >= this.end
+            )
+                this.animation.time = this.start;
         }
 
         // Rotation is determined by A/D interactions
         if (this.keys.a) this.rotation.y += this.rotationSpeed;
         if (this.keys.d) this.rotation.y -= this.rotationSpeed;
 
-        // If W + shift is pressed, run
+        // If W + shift is pressed, run, increase speed
         if (this.keys.w && this.keys.shift) {
             this.speed = 0.4;
-            this.playAnimation('run');
-        // If any other WASD is pressed, just walk
+            this.play('run');
+        // If any other WASD is pressed, just walk, reset speed
         } else if (this.keys.w || this.keys.a || this.keys.s || this.keys.d) {
             this.speed = 0.2;
-            this.playAnimation('walk');
+            this.play('walk');
         // If no movement keys are pressed, idle
         } else {
-            this.playAnimation('idle');
+            this.play('idle');
         }
 
         // Store how much we want to move
         let dist = 0;
-        // How much we want to move is determined by W/D interactions
+        // How much we want to move is determined by W/S interactions
         if (this.keys.w) dist += this.speed;
         if (this.keys.s) dist -= this.speed;
 
         // Check if movement along x-axis incurs collision
         // If so, do not move the cat
         if (dist !== 0) {
-            // Get cat's potential position based on rotation
+            // Get cat's potential position based on dist + rotation
             const x = this.position.x + Math.sin(this.rotation.y) * dist;
             const z = this.position.z + Math.cos(this.rotation.y) * dist;
 
             // If movement doesn't cause collision, actually move
-            if (!this.checkCollisions(x, z)) {
-                this.position.x = x;
-                this.position.z = z;
-            } else {
-                if (!this.checkCollisions(x, this.position.z)) {
-                    this.position.x = x;
-                }
-                if (!this.checkCollisions(this.position.x, z)) {
-                    this.position.z = z;
-                }
-            }
+            // Test each axis individually
+            if (!this.checkCollisions(x, this.position.z)) this.position.x = x;
+            if (!this.checkCollisions(this.position.x, z)) this.position.z = z;
         }
     }
 }

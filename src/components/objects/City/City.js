@@ -1,17 +1,9 @@
 // Imports
-// City will extend Three.js Group, so it's a container that can
-// be added to the scene
-// https://threejs.org/docs/#Group
 import { Group } from 'three';
-// Will use Three.js' loader to parse the city scene GLTF file
-// https://threejs.org/docs/#GLTFLoader
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-// Import city assets
 import MODEL from './city.glb';
 
 // This class manages assets in the city
-// We'll extract the different assets from the gltf file
-// We'll also create helper functions to retrieve random assets
 class City extends Group {
     constructor(onLoadComplete) {
         // City extends Three.js Group
@@ -77,7 +69,6 @@ class City extends Group {
                 'lantern_10',
                 'post_12',
                 'soda_16',
-                'stop_sign_17',
                 'table_18',
                 'umbrella_22',
                 'bus_stop_sign_23',

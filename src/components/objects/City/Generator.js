@@ -1,6 +1,4 @@
 // Imports
-// Generator will extend Three.js Group, so it's a container that can
-// be added to the scene
 import { Group, Vector3, Box3 } from 'three';
 
 // This class treats the world as a chunk-based system
@@ -55,7 +53,7 @@ class Generator extends Group {
         for (let i = 0; i < 3; i++) {
             // Calculate z position
             const sideZ = worldZ + i * 14.9 - 14.9;
-            for (let j = 0; j < 6; j++) {
+            for (let j = 0; j < 10; j++) {
                 // Sidewalk on right side
                 const rightSidewalk = this.assetManager.road['grass_8'].clone();
                 rightSidewalk.userData.collidable = true;
@@ -84,7 +82,7 @@ class Generator extends Group {
                     this.assetManager.foliage
                 );
                 rightDecor.position.set(
-                    worldX - (Math.random() * 7.4 + 22.45),
+                    worldX - (Math.random() * 7.45 + 22.35),
                     0,
                     decorZ
                 );
@@ -95,7 +93,7 @@ class Generator extends Group {
                     this.assetManager.foliage
                 );
                 leftDecor.position.set(
-                    worldX + (Math.random() * 7.4 + 22.45),
+                    worldX + (Math.random() * 7.45 + 22.35),
                     0,
                     decorZ
                 );
@@ -184,7 +182,7 @@ class Generator extends Group {
 
                 // Remove assets associated with terrain from list of
                 // collidable objects as well
-                terrain.children.forEach(asset => {
+                terrain.children.forEach((asset) => {
                     // Find index of asset within array
                     const index = this.collidableObjects.indexOf(asset);
                     // Remove 1 element (that asset) from array based on
@@ -195,7 +193,7 @@ class Generator extends Group {
                 // Remove chunk from lists of tracked chunks
                 this.chunks.delete(z);
             }
-        })
+        });
     }
 }
 
