@@ -1,18 +1,15 @@
 {
-  "name": "lower-case-dashed-name-of-project",
-  "repository": "cos426finalproject",
+  "name": "kitty_kourier",
+  "repository": "final-426",
   "version": "0.1.0",
-  "title": "PROJECT TITLE HERE",
-  "description": "SHORT DESCRIPTION OF PROJECT HERE. ONE TO TWO SENTENCES MAX",
+  "title": "Kitty Kourier!",
+  "description": "You are a cat that delivers packages across the town! Be sure not to get hit by a car while crossing the street.",
   "keywords": [
     "Princeton",
     "graphics",
     "three.js",
     "COS 426",
-    "keywor0d",
-    "keyword1",
-    "keyword2-etc",
-    "but this last entry CANNOT have a comma after it ->"
+    "game"
   ],
   "scripts": {
     "start": "NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server --mode development --output-public-path \"\"",

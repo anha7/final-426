@@ -92,7 +92,7 @@ class Cat extends Group {
         this.end = range.end;
 
         // Increase speed of run animation
-        if (animation === 'run') this.animation.timeScale = 1.5;
+        if (animation === 'run') this.animation.timeScale = 1.8;
         else this.animation.timeScale = 1.0;
 
         // Play new animation
@@ -155,7 +155,7 @@ class Cat extends Group {
 
         // If W + shift is pressed, run, increase speed
         if (this.keys.w && this.keys.shift) {
-            this.speed = 0.4;
+            this.speed = 0.5;
             this.play('run');
         // If any other WASD is pressed, just walk, reset speed
         } else if (this.keys.w || this.keys.a || this.keys.s || this.keys.d) {

@@ -1,5 +1,11 @@
 import * as Dat from 'dat.gui';
-import { Scene, Color, Vector3, TextureLoader, EquirectangularReflectionMapping } from 'three';
+import {
+    Scene,
+    Color,
+    Vector3,
+    TextureLoader,
+    EquirectangularReflectionMapping,
+} from 'three';
 import { Cat, City, Generator } from 'objects';
 import { Game } from './index.js';
 import { BasicLights } from 'lights';
@@ -10,6 +16,9 @@ class SeedScene extends Scene {
         // Call parent Scene() constructor
         super();
 
+        // Get loading screen
+        const loadingScreen = document.getElementById('loading-screen');
+
         // Init state
         this.state = {
             // gui: new Dat.GUI(), // Create GUI for scene
@@ -17,6 +26,7 @@ class SeedScene extends Scene {
             updateList: [],
         };
         this.camera = camera;
+        this.gameOver = false;
 
         // Set background to a nice color
         this.background = new Color(0x7ec0ee);
@@ -36,20 +46,23 @@ class SeedScene extends Scene {
             this.generator.update(new Vector3(0, 0, 0));
 
             // Manage game and start first delivery
-            this.game = new Game(this, this.generator, cat, this.camera);
+            this.game = new Game(
+                this,
+                this.assetManager,
+                this.generator,
+                cat,
+                this.camera
+            );
             this.game.spawnParcel();
         });
 
         // Initialize texture loader
         const loader = new TextureLoader();
         // Load sky image to serve as background
-        loader.load(
-            SKY,
-            (texture) => {
-                texture.mapping = EquirectangularReflectionMapping;
-                this.background = texture;
-            }
-        );
+        loader.load(SKY, (texture) => {
+            texture.mapping = EquirectangularReflectionMapping;
+            this.background = texture;
+        });
 
         // // Populate GUI
         // this.state.gui.add(this.state, 'rotationSpeed', -5, 5);
@@ -63,6 +76,9 @@ class SeedScene extends Scene {
         const { rotationSpeed, updateList } = this.state;
         // this.rotation.y = (rotationSpeed * timeStamp) / 10000;
 
+        // If game is over, don't update anymore
+        if (this.gameOver) return;
+
         // Get reference to cat
         const cat = this.getObjectByName('cat');
         // Ensure cat gets set of collidable objects
@@ -72,7 +88,7 @@ class SeedScene extends Scene {
         }
 
         // Update game
-        if (this.game) this.game.update();
+        if (this.game) this.game.update(timeStamp);
 
         // Call update for each object in the updateList
         for (const obj of updateList) {

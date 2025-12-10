@@ -41,7 +41,7 @@ class Arrow extends Group {
 
         // Position arrow relative to cat
         this.position.set(
-            this.cat.position.x + 1,
+            this.cat.position.x + 3,
             this.cat.position.y + 1,
             this.cat.position.z
         );

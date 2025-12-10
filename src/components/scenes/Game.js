@@ -3,22 +3,29 @@ import { Arrow, Parcel, Pointer } from 'objects';
 
 class Game {
     // Constructor
-    constructor(scene, generator, cat, camera) {
+    constructor(scene, assets, generator, cat, camera) {
         // Scene set up instance variables
         this.scene = scene; // Seed scene
         this.generator = generator; // Terrain generator
         this.cat = cat; // Controlling cat model
         this.camera = camera;
+        this.assets = assets;
 
-        // Delivery game instance variables
+        // Parcel and delivery instance vars
         this.parcel = null; // Current parcel (null on start)
         this.deliveryLocation = null; // Current delivery location (null on start)
         this.parcelPickedUp = false; // Did cat pick up parcel yet?
         this.pickupRange = 64; // Squared
+
+        // Direction instance vars
         this.arrow = new Arrow(camera, cat); // Visual arrow pointing to POI
         this.scene.add(this.arrow);
+
+        // Game condition tracker
         this.score = 0; // Track successful deliveries
-        // Sidewalk positions (right is 0, left is 1)
+        this.gameOver = false; // Flag for tracking whether game is over
+
+        // Sidewalk-related instance vars (right is 0, left is 1)
         this.sidewalks = { 0: -38, 1: 38 };
         // Initialize sidewalk that first parcel spawns in randomly
         this.sideNumber = Math.random() > 0.5 ? 0 : 1;
@@ -28,11 +35,111 @@ class Game {
             this.sidewalks[
                 (this.sideNumber + 1) % Object.keys(this.sidewalks).length
             ];
-        this.sideNumber = Math.random() > 0.5 ? 0 : 1;;
+        this.sideNumber = Math.random() > 0.5 ? 0 : 1;
+
+        // Car-related instance vars
+        this.vehicles = []; // Track all active vehicles in road
+        this.lastSpawn = null; // Track timestamp for vehicle spawns
+        this.maxVehicles = 15; // Max 15 vehicles at a time
+        // Vehicles spawn every 3-6 seconds
+        this.vehicleSpawnInterval = Math.random() * 3000 + 3000;
+        // Spawn initial vehicle
+        this.spawnVehicle();
     }
 
-    // Helper method to find a valid position to spawn parcel / delivery
-    // location
+    // Instance method to spawn a vehicle
+    spawnVehicle() {
+        // Get a random vehicle
+        const vehicle = this.assets.getRandomVehicle();
+
+        // Spawn position is about 650 units ahead of cat
+        // Cars will come down the road
+        vehicle.position.set(
+            0.38,
+            0,
+            this.cat.position.z + 660
+        );
+        // Rotate vehicle to face cat
+        vehicle.rotation.y = Math.PI;
+
+        // Add to set of vehicles
+        // Speed is randomly set between 3-5 units per frame
+        this.vehicles.push({ object: vehicle, speed: Math.random() * 2 + 3 });
+        this.scene.add(vehicle);
+    }
+
+    // Instance method to handle vehicles spawning
+    handleVehicleSpawns(timeStamp) {
+        // Initialize last spawn time if it does not already exist
+        if (this.lastSpawn === null) this.lastSpawn = timeStamp;
+
+        // Check time elapsed since last spawn
+        const elapsed = timeStamp - this.lastSpawn;
+        // Check if it's time to spawn a new vehicle
+        if (
+            elapsed >= this.vehicleSpawnInterval &&
+            this.vehicles.length < this.maxVehicles
+        ) {
+            // Spawn new vehicle
+            this.spawnVehicle();
+            // Reset state
+            this.lastSpawn = timeStamp;
+            this.vehicleSpawnInterval = Math.random() * 3000 + 3000;
+        }
+    }
+
+    // Instance method all vehicles and clean ones too far away
+    updateVehicles() {
+        // Loop through each existing vehicle
+        for (let i = 0; i < this.vehicles.length; i++) {
+            // Get current vehicle
+            const vehicle = this.vehicles[i];
+
+            // If it exists, move it and remove if it's too far behind cat
+            if (vehicle !== null) {
+                vehicle.object.position.z -= vehicle.speed;
+                if (vehicle.object.position.z < this.cat.position.z - 660) {
+                    this.scene.remove(vehicle.object);
+                    this.vehicles.splice(i, 1);
+                }
+            }
+        }
+    }
+
+    // Instance method to check for vehicle collisions and handle game
+    // over
+    checkCollision() {
+        // Ensure cat model exists
+        if (!this.cat.model) return;
+
+        // Get cat's position
+        const catPos = this.cat.position;
+
+        // Create cat hit box
+        const halfCatSize = 1.1;
+        const hitBox = new Box3(
+            new Vector3(catPos.x - halfCatSize, 0, catPos.z - halfCatSize),
+            new Vector3(catPos.x + halfCatSize, 2, catPos.z + halfCatSize)
+        );
+
+        // Loop through every vehicle in set of vehicles
+        for (const vehicle of this.vehicles) {
+            // Create a hit box for current object
+            const vehicleHitBox = new Box3().setFromObject(vehicle.object);
+            // Check for collisions, returning first collision we find
+            if (hitBox.intersectsBox(vehicleHitBox)) {
+                this.cat.rotation.z = Math.PI / 2;
+                this.cat.position.y = 1;
+                this.scene.gameOver = true;
+            }
+        }
+
+        // No collisions found, return false
+        return false;
+    }
+
+    // Instance method to find a valid position to spawn parcel /
+    // delivery location
     findSpawnPos(x, z, object) {
         // Try 20 times to find a valid spawn position
         for (let i = 0; i < 20; i++) {
@@ -106,7 +213,7 @@ class Game {
         const spawnPos = this.findSpawnPos(this.deliverySide, spawnZ, pointer);
 
         // Add to scene and update necessary instance vars
-        pointer.position.set(spawnPos.x, 0, spawnPos.z);
+        pointer.position.set(spawnPos.x, 5, spawnPos.z);
         this.scene.add(pointer);
         this.deliverySide =
             this.sidewalks[
@@ -176,7 +283,7 @@ class Game {
     }
 
     // Instance method for checking game conditions every frame
-    update() {
+    update(timeStamp) {
         // Check if cat has reached parcel / destination
         this.checkParcelProximity();
         this.checkDeliveryProximity();
@@ -188,6 +295,13 @@ class Game {
 
         // Update direction arrow
         this.arrow.update();
+
+        // Update vehicles
+        this.updateVehicles();
+        this.handleVehicleSpawns(timeStamp);
+
+        // Check for vehicle collisions
+        this.checkCollision();
     }
 }
 

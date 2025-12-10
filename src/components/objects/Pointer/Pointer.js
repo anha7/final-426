@@ -25,7 +25,7 @@ class Pointer extends Group {
 
             // Add a glowing light to pointer so players can easily see
             // it
-            const light = new PointLight(0xFFFFFF, 10, 16);
+            const light = new PointLight(0x73ffc7, 10, 16);
             light.position.set(0, 2/0.6, 0);
             this.add(light);
 

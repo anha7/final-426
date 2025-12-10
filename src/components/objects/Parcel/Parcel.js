@@ -24,7 +24,7 @@ class Parcel extends Group {
 
             // Add a glowing light to parcel so players can easily see
             // it
-            const light = new PointLight(0xFFFFFF, 10, 16);
+            const light = new PointLight(0x73ffc7, 10, 16);
             this.light = light;
             light.position.set(0, 2/25, 0);
             this.add(light);
