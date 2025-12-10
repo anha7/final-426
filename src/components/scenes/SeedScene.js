@@ -9,15 +9,12 @@ import {
 import { Cat, City, Generator } from 'objects';
 import { Game } from './index.js';
 import { BasicLights } from 'lights';
-import SKY from './sky.png';
+import SKY from './sky.jpg';
 
 class SeedScene extends Scene {
     constructor(camera) {
         // Call parent Scene() constructor
         super();
-
-        // Get loading screen
-        const loadingScreen = document.getElementById('loading-screen');
 
         // Init state
         this.state = {
@@ -45,15 +42,33 @@ class SeedScene extends Scene {
             // Generate initial chunks of terrain
             this.generator.update(new Vector3(0, 0, 0));
 
-            // Manage game and start first delivery
-            this.game = new Game(
-                this,
-                this.assetManager,
-                this.generator,
-                cat,
-                this.camera
-            );
-            this.game.spawnParcel();
+            // After assets load, introduce start game button
+            const loadingText = document.querySelector('#loading-screen h4');
+            loadingText.innerHTML =
+                '<button id="start-button">Start Game</button>';
+
+            // Manage start game button
+            const startButton = document.getElementById('start-button');
+            // If user clicks start game, start the game
+            startButton.addEventListener('click', () => {
+                // Hide loading screen
+                const loadingScreen = document.getElementById('loading-screen');
+                loadingScreen.style.display = 'none';
+
+                // Show scoreboard
+                const scoreboard = document.getElementById('score-board');
+                scoreboard.style.display = 'flex';
+
+                // Manage game and start first delivery
+                this.game = new Game(
+                    this,
+                    this.assetManager,
+                    this.generator,
+                    cat,
+                    this.camera
+                );
+                this.game.spawnParcel();
+            });
         });
 
         // Initialize texture loader

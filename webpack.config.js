@@ -32,6 +32,11 @@ module.exports = {
                 use: 'raw-loader',
                 exclude: path.resolve(__dirname, './node_modules/'),
             },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader'],
+                exclude: path.resolve(__dirname, './node_modules/'),
+            }
         ],
     },
     resolve: {
@@ -42,6 +47,6 @@ module.exports = {
         },
     },
     plugins: [
-        new HtmlWebpackPlugin({ template: './index.html', title: 'Kitty Kourier!', favicon: 'src/favicon.ico' }),
+        new HtmlWebpackPlugin({ title: 'Kitty Kourier!', favicon: 'src/favicon.ico' }),
     ],
 };

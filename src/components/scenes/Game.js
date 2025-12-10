@@ -41,8 +41,8 @@ class Game {
         this.vehicles = []; // Track all active vehicles in road
         this.lastSpawn = null; // Track timestamp for vehicle spawns
         this.maxVehicles = 15; // Max 15 vehicles at a time
-        // Vehicles spawn every 3-6 seconds
-        this.vehicleSpawnInterval = Math.random() * 3000 + 3000;
+        // Vehicles spawn every 1-4 seconds
+        this.vehicleSpawnInterval = Math.random() * 3000 + 1000;
         // Spawn initial vehicle
         this.spawnVehicle();
     }
@@ -84,7 +84,7 @@ class Game {
             this.spawnVehicle();
             // Reset state
             this.lastSpawn = timeStamp;
-            this.vehicleSpawnInterval = Math.random() * 3000 + 3000;
+            this.vehicleSpawnInterval = Math.random() * 3000 + 1000;
         }
     }
 
@@ -108,7 +108,7 @@ class Game {
 
     // Instance method to check for vehicle collisions and handle game
     // over
-    checkCollision() {
+    handleCollision() {
         // Ensure cat model exists
         if (!this.cat.model) return;
 
@@ -128,9 +128,23 @@ class Game {
             const vehicleHitBox = new Box3().setFromObject(vehicle.object);
             // Check for collisions, returning first collision we find
             if (hitBox.intersectsBox(vehicleHitBox)) {
+                // Flip cat over :(
                 this.cat.rotation.z = Math.PI / 2;
                 this.cat.position.y = 1;
+
+                // Flag game as over
                 this.scene.gameOver = true;
+                // Hide scoreboard
+                const scoreboard = document.getElementById('score-board');
+                scoreboard.style.display = 'none';
+                // Show end game screen
+                const overScreen = document.getElementById('game-over-screen');
+                overScreen.style.display = 'flex';
+                // Handle restart button
+                const restartButton = document.getElementById('end-button');
+                restartButton.addEventListener('click', () => {
+                    window.location.reload();
+                });
             }
         }
 
@@ -268,14 +282,20 @@ class Game {
         if (dx * dx + dz * dz < this.pickupRange) {
             // Increase score
             this.score++;
-            console.log('Score is now:', this.score);
+            const currentScore = document.getElementById('current-score');
+            currentScore.innerHTML = this.score;
+            const finalScore = document.getElementById('final-score');
+            finalScore.innerHTML = this.score;
+
             // Remove parcel and delivery location
             this.cat.remove(this.parcel);
             this.parcel = null;
             this.scene.remove(this.deliveryLocation);
             this.deliveryLocation = null;
+
             // Reset state
             this.parcelPickedUp = false;
+
             // Start next delivery
             this.arrow.setTarget(null);
             this.spawnParcel();
@@ -300,8 +320,8 @@ class Game {
         this.updateVehicles();
         this.handleVehicleSpawns(timeStamp);
 
-        // Check for vehicle collisions
-        this.checkCollision();
+        // Check for vehicle collisions, and end game if found
+        this.handleCollision();
     }
 }
 

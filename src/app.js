@@ -9,6 +9,73 @@
 import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { SeedScene } from 'scenes';
+import './styles.css';
+
+//----------------------------------------------------------------------
+
+// Create GUI screens
+
+// Loading screen
+const loadingScreen = document.createElement('div');
+loadingScreen.id = 'loading-screen';
+loadingScreen.innerHTML = `
+    <div id="text-holder">
+        <h1>
+            Kitty Kourier!
+        </h1>
+        <h2>
+            How to Play:
+        </h2>
+        <h3>
+            You are controlling Bridget the kitty, who delivers packages
+            all over town!<br/>
+            Use <i>WASD</i> to move and <i>Shift</i> to
+            sprint.<br/>
+            A red arrow will point you towards a point of interest
+            (POI), which will be the location of a package you
+            have to collect or a destination you must
+            deliver the package.<br/>
+            You pick up packages and deliver them by simply
+            getting within the radius of the POI.<br/>
+            Have fun, and do not get hit by a car!
+        </h3>
+        <h4>
+            Loading assets...
+        </h4>
+    </div>
+`;
+document.body.appendChild(loadingScreen);
+
+// Score board 
+const scoreBoard = document.createElement('div');
+scoreBoard.id = 'score-board';
+scoreBoard.innerHTML = `
+    <p>Packages Delivered: <span id="current-score">0</span></p>
+`;
+document.body.appendChild(scoreBoard);
+
+// Game over screeen
+const gameOver = document.createElement('div');
+gameOver.id = 'game-over-screen';
+gameOver.innerHTML = `
+    <div id="text-holder">
+        <h1>
+            Game Over!
+        </h1>
+        <h2>
+            Bridget got hit by a car... :(
+        </h2>
+        <h3>
+            Packages delivered: <span id="final-score">0</span>
+        </h3>
+        <h4>
+            <button id="end-button">Restart Game</button>
+        </h4>
+    </div>
+`;
+document.body.appendChild(gameOver);
+
+//----------------------------------------------------------------------
 
 // Initialize core ThreeJS components
 const camera = new PerspectiveCamera();
