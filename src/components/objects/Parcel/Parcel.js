@@ -1,7 +1,6 @@
 // Imports
-import { Group } from 'three';
+import { Group, PointLight, Box3, Vector3 } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import MODEL from './parcel.glb';
 
 // This class manages the parcel model
@@ -11,49 +10,28 @@ class Parcel extends Group {
         super();
 
         // Instance variables
-        this.spin = () => this.spin();
-        this.twirl = 0;
         this.name = 'parcel';
 
         // Initialize loader
         const loader = new GLTFLoader();
         loader.load(MODEL, (gltf) => {
+            // Modify parcel attributes
+            this.scale.set(25, 25, 25);
+            this.model = gltf.scene;
+
+            // const box = new Box3().setFromObject(this.model);
+            // console.log("parcel size:", box.getSize(new Vector3()));
+
+            // Add a glowing light to parcel so players can easily see
+            // it
+            const light = new PointLight(0xFFFFFF, 10, 16);
+            this.light = light;
+            light.position.set(0, 2/25, 0);
+            this.add(light);
+
             // Add parcel to scene
             this.add(gltf.scene);
         });
-    }
-
-    // Adapted from Flower.js
-    spin() {
-        // Add a simple twirl
-        this.state.twirl += 6 * Math.PI;
-
-        // Use timing library for more precice "bounce" animation
-        // TweenJS guide: http://learningthreejs.com/blog/2011/08/17/tweenjs-for-smooth-animation/
-        // Possible easings: http://sole.github.io/tween.js/examples/03_graphs.html
-        const jumpUp = new TWEEN.Tween(this.position)
-            .to({ y: this.position.y + 1 }, 300)
-            .easing(TWEEN.Easing.Quadratic.Out);
-        const fallDown = new TWEEN.Tween(this.position)
-            .to({ y: 0 }, 300)
-            .easing(TWEEN.Easing.Quadratic.In);
-
-        // Fall down after jumping up
-        jumpUp.onComplete(() => fallDown.start());
-
-        // Start animation
-        jumpUp.start();
-    }
-
-    update() {
-        // Adapted from Flower.js
-        if (this.twirl > 0) {
-            // Lazy implementation of twirl
-            this.twirl -= Math.PI / 8;
-            this.rotation.y += Math.PI / 8;
-        }
-        // Advance tween animations
-        TWEEN.update();
     }
 }
 

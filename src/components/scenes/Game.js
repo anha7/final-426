@@ -3,21 +3,23 @@ import { Arrow, Parcel, Pointer } from 'objects';
 
 class Game {
     // Constructor
-    constructor(scene, generator, cat) {
+    constructor(scene, generator, cat, camera) {
         // Scene set up instance variables
         this.scene = scene; // Seed scene
         this.generator = generator; // Terrain generator
         this.cat = cat; // Controlling cat model
+        this.camera = camera;
 
         // Delivery game instance variables
         this.parcel = null; // Current parcel (null on start)
         this.deliveryLocation = null; // Current delivery location (null on start)
         this.parcelPickedUp = false; // Did cat pick up parcel yet?
-        this.pickupRange = 4; // Squared
-        this.arrow = new Arrow(); // Visual arrow pointing to POI
+        this.pickupRange = 64; // Squared
+        this.arrow = new Arrow(camera, cat); // Visual arrow pointing to POI
+        this.scene.add(this.arrow);
         this.score = 0; // Track successful deliveries
         // Sidewalk positions (right is 0, left is 1)
-        this.sidewalks = { 0: -22.35, 1: 22.35 };
+        this.sidewalks = { 0: -38, 1: 38 };
         // Initialize sidewalk that first parcel spawns in randomly
         this.sideNumber = Math.random() > 0.5 ? 0 : 1;
         this.parcelSide = this.sidewalks[this.sideNumber];
@@ -26,25 +28,27 @@ class Game {
             this.sidewalks[
                 (this.sideNumber + 1) % Object.keys(this.sidewalks).length
             ];
-        this.sideNumber++;
+        this.sideNumber = Math.random() > 0.5 ? 0 : 1;;
     }
 
     // Helper method to find a valid position to spawn parcel / delivery
     // location
-    findSpawnPos(x, z) {
-        // Try 5 times to find a valid spawn position
-        for (let i = 0; i < 5; i++) {
-            // Every iteration, try 10 units forward from last
-            const testZ = z + i * 10;
+    findSpawnPos(x, z, object) {
+        // Try 20 times to find a valid spawn position
+        for (let i = 0; i < 20; i++) {
+            // Every iteration, try 2 units forward from last
+            const testZ = z + i * 2;
 
-            // Create a bounding box to test collisions
-            // Size is based on cat's size to ensure cat is able to
-            // access parcel area
-            const halfCatSize = 1.1;
-            const hitBox = new Box3(
-                new Vector3(x - halfCatSize, 0, z - halfCatSize),
-                new Vector3(x + halfCatSize, 2, z + halfCatSize)
+            // Create a hit box to test collisions
+            const hitBox = new Box3().setFromObject(object);
+            // Translate hit box to test position
+            const offset = new Vector3(
+                x - object.position.x,
+                0,
+                testZ - object.position.z
             );
+            hitBox.min.add(offset);
+            hitBox.max.add(offset);
 
             // Loop through every object in set of collidable objects
             // and test for collisions
@@ -68,22 +72,21 @@ class Game {
     // Instance method to spawn a parcel
     spawnParcel() {
         // Determine spawn distance of parcel from cat's current z
-        // position (randomly 20-35 units away from cat)
-        const spawnZ = this.cat.position.z + (Math.random() * 15 + 20);
+        // position (randomly 60-90 units away from cat)
+        const spawnZ = this.cat.position.z + (Math.random() * 30 + 60);
+
+        // Create new parcel
+        const parcel = new Parcel();
+        this.parcel = parcel;
 
         // Find valid spawn position
-        const spawnPos = this.findSpawnPos(this.parcelSide, spawnZ);
+        const spawnPos = this.findSpawnPos(this.parcelSide, spawnZ, parcel);
 
-        // Create new parcel, add to scene, and update necessary
-        // instance vars
-        const parcel = new Parcel();
-        parcel.position.set(spawnPos.x, 0, spawnPos.z);
+        // Add to scene and update necessary instance vars
+        parcel.position.set(spawnPos.x, 5, spawnPos.z);
         this.scene.add(parcel);
-        this.parcel = parcel;
-        this.parcelSide =
-            this.sidewalks[
-                this.sideNumber % Object.keys(this.sidewalks).length
-            ];
+        this.parcelSide = this.sidewalks[this.sideNumber];
+        this.arrow.setTarget(parcel);
     }
 
     // Instance method to spawn a delivery location
@@ -92,23 +95,25 @@ class Game {
         if (!this.parcel) return;
 
         // Determine spawn distance of delivery from cat's current z
-        // position (randomly 15-30 units away from parcel)
-        const spawnZ = this.cat.position.z + (Math.random() * 15 + 15);
+        // position (randomly 60-90 units away from cat)
+        const spawnZ = this.cat.position.z + (Math.random() * 30 + 60);
+
+        // Create new delivery pointer
+        const pointer = new Pointer();
+        this.deliveryLocation = pointer;
 
         // Find valid spawn position
-        const spawnPos = this.findSpawnPos(this.deliverySide, spawnZ);
+        const spawnPos = this.findSpawnPos(this.deliverySide, spawnZ, pointer);
 
-        // Create new delivery pointer, add to scene, and update
-        // necessary instance vars
-        const pointer = new Pointer();
+        // Add to scene and update necessary instance vars
         pointer.position.set(spawnPos.x, 0, spawnPos.z);
         this.scene.add(pointer);
-        this.deliveryLocation = pointer;
         this.deliverySide =
             this.sidewalks[
                 (this.sideNumber + 1) % Object.keys(this.sidewalks).length
             ];
-        this.sideNumber++;
+        this.sideNumber = Math.random() > 0.5 ? 0 : 1;
+        this.arrow.setTarget(pointer);
     }
 
     // Instance method to check whether cat is in pickup range of
@@ -131,8 +136,11 @@ class Game {
             this.scene.remove(this.parcel);
             // Position parcel above cat
             this.cat.add(this.parcel);
-            this.parcel.position.set(0, 3, 0);
+            this.parcel.remove(this.parcel.light);
+            this.parcel.rotation.y = 0;
+            this.parcel.position.set(0, 4.25, 0);
             // Spawn delivery location
+            this.arrow.setTarget(null);
             this.spawnDelivery();
         }
     }
@@ -161,15 +169,25 @@ class Game {
             this.deliveryLocation = null;
             // Reset state
             this.parcelPickedUp = false;
-            // Schedule next delivery after 2 seconds
-            setTimeout(() => this.spawnParcel(), 2000);
+            // Start next delivery
+            this.arrow.setTarget(null);
+            this.spawnParcel();
         }
     }
 
     // Instance method for checking game conditions every frame
     update() {
+        // Check if cat has reached parcel / destination
         this.checkParcelProximity();
         this.checkDeliveryProximity();
+
+        // Ensure parcel and pointer rotate
+        if (this.parcel && this.parcel.parent === this.scene)
+            this.parcel.rotation.y += 0.02;
+        if (this.deliveryLocation) this.deliveryLocation.rotation.y += 0.02;
+
+        // Update direction arrow
+        this.arrow.update();
     }
 }
 

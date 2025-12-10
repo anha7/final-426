@@ -6,7 +6,7 @@ import { BasicLights } from 'lights';
 import SKY from './sky.png';
 
 class SeedScene extends Scene {
-    constructor() {
+    constructor(camera) {
         // Call parent Scene() constructor
         super();
 
@@ -16,6 +16,7 @@ class SeedScene extends Scene {
             rotationSpeed: 1,
             updateList: [],
         };
+        this.camera = camera;
 
         // Set background to a nice color
         this.background = new Color(0x7ec0ee);
@@ -35,7 +36,7 @@ class SeedScene extends Scene {
             this.generator.update(new Vector3(0, 0, 0));
 
             // Manage game and start first delivery
-            this.game = new Game(this, this.generator, cat);
+            this.game = new Game(this, this.generator, cat, this.camera);
             this.game.spawnParcel();
         });
 
