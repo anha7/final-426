@@ -30,9 +30,16 @@ Alexander is licensed under Creative Commons Attribution
 
 Atmospheric image is from Pixabay (https://pixabay.com/vectors/triangle-polygon-background-2790346/).
 
-All audio clips are from Pixabay (https://pixabay.com/sound-effects/).
+All audio clips are from Pixabay:
+- https://pixabay.com/sound-effects/button-394464/
+- https://pixabay.com/sound-effects/cat-meow-sound-383823/
+- https://pixabay.com/sound-effects/clear-combo-7-394494/
+- https://pixabay.com/sound-effects/click-1-384917/
+- https://pixabay.com/sound-effects/double-car-horn-352443/
+- https://pixabay.com/sound-effects/game-music-loop-6-144641/
+- https://pixabay.com/sound-effects/walk-on-grass-1-291984/
 
-Volume toggle icons are from Iconify (https://icon-sets.iconify.design/).
+Volume toggle icons are from Iconify (https://icon-sets.iconify.design/?query=volume&tag=Contains+Animations).
 
 ## License
 [MIT](./LICENSE)
