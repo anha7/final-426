@@ -5,7 +5,7 @@ import MODEL from './cat.glb';
 
 // This class manages the cat model
 class Cat extends Group {
-    constructor() {
+    constructor(scene) {
         // Cat extends Three.js Group
         super();
 
@@ -37,6 +37,9 @@ class Cat extends Group {
             this.currentAnimation = null;
             // Default animation is idle
             this.play('idle');
+
+            // Set scene to be able to play walking audio
+            this.scene = scene;
         });
 
         // We'll be using WASD to move the cat, shift to run
@@ -157,11 +160,17 @@ class Cat extends Group {
         if (this.keys.w && this.keys.shift) {
             this.speed = 0.5;
             this.play('run');
-        // If any other WASD is pressed, just walk, reset speed
+            // Play footsteps audio
+            if (!this.scene.footstepsNoise.isPlaying)
+                this.scene.footstepsNoise.play();
+            // If any other WASD is pressed, just walk, reset speed
         } else if (this.keys.w || this.keys.a || this.keys.s || this.keys.d) {
             this.speed = 0.2;
             this.play('walk');
-        // If no movement keys are pressed, idle
+            // Play footsteps audio
+            if (!this.scene.footstepsNoise.isPlaying)
+                this.scene.footstepsNoise.play();
+            // If no movement keys are pressed, idle
         } else {
             this.play('idle');
         }

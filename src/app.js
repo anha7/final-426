@@ -15,14 +15,41 @@ import './styles.css';
 
 // Create GUI screens
 
+// Start screen
+const startScreen = document.createElement('div');
+startScreen.id = 'start-screen';
+startScreen.innerHTML = `
+    <h1>
+        Left click to begin.
+    </h1>
+`;
+document.body.appendChild(startScreen);
+
+// Volume button
+const volumeButton = document.createElement('button');
+volumeButton.id = 'volume';
+volumeButton.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -3 30 30">
+        <path fill="white" d="M16 12c0 0 0 0 0 0c0 0 0 0 0 0Z">
+            <animate fill="freeze" attributeName="d" begin="0.4s" dur="0.2s" values="M16 12c0 0 0 0 0 0c0 0 0 0 0 0Z;M16 16c1.5 -0.71 2.5 -2.24 2.5 -4c0 -1.77 -1 -3.26 -2.5 -4Z"/>
+        </path>
+        <path fill="none" stroke="white" stroke-dasharray="32" stroke-dashoffset="32" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 10h3.5l3.5 -3.5v10.5l-3.5 -3.5h-3.5Z">
+            <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.4s" values="32;0"/>
+        </path>
+    </svg>
+`;
+document.body.appendChild(volumeButton);
+
 // Loading screen
 const loadingScreen = document.createElement('div');
 loadingScreen.id = 'loading-screen';
 loadingScreen.innerHTML = `
     <div id="text-holder">
-        <h1>
-            Kitty Kourier!
-        </h1>
+        <div id="title-holder">
+            <h1>
+                Kitty Kourier!
+            </h1>
+        </div>
         <h2>
             How to Play:
         </h2>
@@ -46,11 +73,13 @@ loadingScreen.innerHTML = `
 `;
 document.body.appendChild(loadingScreen);
 
-// Score board 
+// Score board
 const scoreBoard = document.createElement('div');
 scoreBoard.id = 'score-board';
 scoreBoard.innerHTML = `
-    <p>Packages Delivered: <span id="current-score">0</span></p>
+    <p>
+        Packages Delivered: <span id="current-score">0</span>
+    </p>
 `;
 document.body.appendChild(scoreBoard);
 
@@ -59,9 +88,11 @@ const gameOver = document.createElement('div');
 gameOver.id = 'game-over-screen';
 gameOver.innerHTML = `
     <div id="text-holder">
-        <h1>
-            Game Over!
-        </h1>
+        <div id="title-holder">
+            <h1>
+                Game Over!
+            </h1>
+        </div>
         <h2>
             Bridget got hit by a car... :(
         </h2>
@@ -107,11 +138,7 @@ const onAnimationFrameHandler = (timeStamp) => {
     const cat = scene.getObjectByName('cat');
     if (cat) {
         // Configure OrbitControls to follow cat
-        controls.target.set(
-            cat.position.x,
-            6,
-            cat.position.z
-        );
+        controls.target.set(cat.position.x, 6, cat.position.z);
     }
     // Ensure camera doesn't go below origin
     if (camera.position.y < 1) camera.position.y = 1;

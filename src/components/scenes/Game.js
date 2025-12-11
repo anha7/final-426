@@ -45,6 +45,9 @@ class Game {
         this.vehicleSpawnInterval = Math.random() * 3000 + 1000;
         // Spawn initial vehicle
         this.spawnVehicle();
+        this.lastHonk = null; // Track timestamp since last honk noise
+        // Honks play every 8-15 seconds
+        this.honkInterval = Math.random() * 10000 + 10000;
     }
 
     // Instance method to spawn a vehicle
@@ -128,21 +131,29 @@ class Game {
             const vehicleHitBox = new Box3().setFromObject(vehicle.object);
             // Check for collisions, returning first collision we find
             if (hitBox.intersectsBox(vehicleHitBox)) {
+                // Play crash audio and stop background audio
+                this.scene.crashNoise.play();
+                this.scene.backgroundNoise.stop();
+
                 // Flip cat over :(
                 this.cat.rotation.z = Math.PI / 2;
                 this.cat.position.y = 1;
 
                 // Flag game as over
                 this.scene.gameOver = true;
+
                 // Hide scoreboard
                 const scoreboard = document.getElementById('score-board');
                 scoreboard.style.display = 'none';
+
                 // Show end game screen
                 const overScreen = document.getElementById('game-over-screen');
                 overScreen.style.display = 'flex';
+
                 // Handle restart button
                 const restartButton = document.getElementById('end-button');
                 restartButton.addEventListener('click', () => {
+                    this.scene.clickNoise.play();
                     window.location.reload();
                 });
             }
@@ -251,15 +262,21 @@ class Game {
         const dx = parcelPos.x - catPos.x;
         const dz = parcelPos.z - catPos.z;
         if (dx * dx + dz * dz < this.pickupRange) {
+            // Play audio
+            this.scene.packageNoise.play();
+
             // Mark that parcel has been picked up
             this.parcelPickedUp = true;
+
             // Remove parcel from scene
             this.scene.remove(this.parcel);
+
             // Position parcel above cat
             this.cat.add(this.parcel);
             this.parcel.remove(this.parcel.light);
             this.parcel.rotation.y = 0;
             this.parcel.position.set(0, 4.25, 0);
+
             // Spawn delivery location
             this.arrow.setTarget(null);
             this.spawnDelivery();
@@ -275,11 +292,15 @@ class Game {
         // Get position of cat and delivery location
         const catPos = this.cat.position;
         const deliveryPos = this.deliveryLocation.position;
+
         // Check whether distance from cat to delivery is within pickup
         // range
         const dx = deliveryPos.x - catPos.x;
         const dz = deliveryPos.z - catPos.z;
         if (dx * dx + dz * dz < this.pickupRange) {
+            // Play delivery audio
+            this.scene.deliveryNoise.play();
+
             // Increase score
             this.score++;
             const currentScore = document.getElementById('current-score');
@@ -304,6 +325,18 @@ class Game {
 
     // Instance method for checking game conditions every frame
     update(timeStamp) {
+        // Play honk noise every so often
+        if (this.lastHonk === null) this.lastHonk = timeStamp;
+        // Check time elapsed since last spawn
+        const elapsed = timeStamp - this.lastHonk;
+        // Play honk noise if enough time has elapsed
+        if (elapsed >= this.honkInterval) {
+            this.scene.honkNoise.play();
+            // Reset state
+            this.lastHonk = timeStamp;
+            this.honkInterval = Math.random() * 10000 + 10000;
+        }
+
         // Check if cat has reached parcel / destination
         this.checkParcelProximity();
         this.checkDeliveryProximity();

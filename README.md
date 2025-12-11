@@ -33,5 +33,11 @@ The pointer assets, "Map Pointer (3D Icon)" (https://skfb.ly/ooNzy) by
 Alexander is licensed under Creative Commons Attribution
 (http://creativecommons.org/licenses/by/4.0/).
 
+Atmospheric image is from Pixabay (https://pixabay.com/vectors/).
+
+All audio clips are from Pixabay (https://pixabay.com/sound-effects/).
+
+Volume toggle icons are from Iconify (https://icon-sets.iconify.design/).
+
 ## License
 [MIT](./LICENSE)
