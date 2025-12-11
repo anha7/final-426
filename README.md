@@ -1,11 +1,6 @@
 # COS 426 Final Project – Kitty Kourier!
 This is Anha Khan's final project for COS 426.
 
-## Building the Project for the Web
-Once you are happy with your project, try building a production bundle using `npm run build`. This will place an optimized and minified executable version of your project in the `./build/` directory. Test out this production build by setting `./build/` as your working directory and starting out a python server.
-
-Once you have a working production build and are ready for the site to go live, you can deploy your project straight to GitHub Pages via `npm run deploy`. Note that this requires that (1) your project is part of a repository, and (2) you have correctly set up your project's `package.json` file.
-
 ## CC Attributes and Credits
 Initial models were downloaded from the Google Poly project:
 * [Floating island](https://poly.google.com/view/eEz9hdknXOi)
