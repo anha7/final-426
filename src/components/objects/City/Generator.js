@@ -53,7 +53,7 @@ class Generator extends Group {
         for (let i = 0; i < 3; i++) {
             // Calculate z position
             const sideZ = worldZ + i * 14.9 - 14.9;
-            for (let j = 0; j < 10; j++) {
+            for (let j = 0; j < 20; j++) {
                 // Sidewalk on right side
                 const rightSidewalk = this.assetManager.road['grass_8'].clone();
                 rightSidewalk.userData.collidable = true;

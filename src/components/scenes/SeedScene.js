@@ -7,8 +7,7 @@ import {
     EquirectangularReflectionMapping,
     Audio,
     AudioListener,
-    AudioLoader,
-    NoToneMapping,
+    AudioLoader
 } from 'three';
 import { Cat, City, Generator } from 'objects';
 import { Game } from './index.js';
