@@ -94,7 +94,8 @@ gameOver.innerHTML = `
             </h1>
         </div>
         <h2>
-            Bridget got hit by a car... :(
+            Bridget got hit by a car... :( But do not worry! She's a
+            super cat who got up, unharmed, and went home safely.
         </h2>
         <h3>
             Packages delivered: <span id="final-score">0</span>
