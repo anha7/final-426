@@ -1,10 +1,10 @@
 # COS 426 Final Project – Kitty Kourier!
 This is Anha Khan's final project for COS 426.
 
-## Link to writeup:
+## Link to Writeup
 https://github.com/anha7/final-426/blob/main/FinalWrittenReport.pdf
 
-## Link to demo:
+## Link to Demo
 
 
 ## CC Attributes and Credits
