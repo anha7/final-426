@@ -1,6 +1,12 @@
 # COS 426 Final Project – Kitty Kourier!
 This is Anha Khan's final project for COS 426.
 
+## Link to writeup:
+https://github.com/anha7/final-426/blob/main/FinalWrittenReport.pdf
+
+## Link to demo:
+
+
 ## CC Attributes and Credits
 Initial models were downloaded from the Google Poly project:
 * [Floating island](https://poly.google.com/view/eEz9hdknXOi)
