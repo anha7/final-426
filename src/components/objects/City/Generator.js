@@ -56,12 +56,10 @@ class Generator extends Group {
             for (let j = 0; j < 20; j++) {
                 // Sidewalk on right side
                 const rightSidewalk = this.assetManager.road['grass_8'].clone();
-                rightSidewalk.userData.collidable = true;
                 rightSidewalk.position.set(worldX - j * 14.9 - 22.35, 0, sideZ);
 
                 // Sidewalk on left side
                 const leftSidewalk = this.assetManager.road['grass_8'].clone();
-                leftSidewalk.userData.collidable = true;
                 leftSidewalk.position.set(worldX + j * 14.9 + 22.35, 0, sideZ);
 
                 // Add to set of assets

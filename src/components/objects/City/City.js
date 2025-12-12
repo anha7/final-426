@@ -20,8 +20,6 @@ class City extends Group {
         this.vehicles = {};
         this.decor = {};
         this.road = {};
-        this.street = {};
-        this.lights = {};
         this.fence = null;
 
         // Define assets from city scene to look out for when traversing
@@ -81,13 +79,6 @@ class City extends Group {
                 'sidewalk_26',
                 'grass_8'
             ],
-            // Different traffic lights
-            lights: [
-                'car_light_red_4',
-                'light_red_11',
-                'car_light_green_24',
-                'light_green_25'
-            ],
             fence: 'barrier_0'
         };
 
@@ -119,11 +110,6 @@ class City extends Group {
                 if (this.assets.road.includes(object.name)) {
                     object.scale.set(5, 5, 5);
                     this.road[object.name] = object;
-                }
-                // Look for different traffic lights
-                if (this.assets.lights.includes(object.name)) {
-                    object.scale.set(5, 5, 5);
-                    this.lights[object.name] = object;
                 }
                 // Look for fence
                 if (this.assets.fence === object.name) {
@@ -163,10 +149,6 @@ class City extends Group {
     // Get a random decor
     getRandomDecor() {
         return this.randomObject(this.decor);
-    }
-    // Get random street lights
-    getRandomStreetLight() {
-        return this.randomObject(this.lights);
     }
 }
 

@@ -45,7 +45,7 @@ class SeedScene extends Scene {
         this.add(cat, lights);
         this.addToUpdateList(cat);
 
-        // Initialize audioa
+        // Initialize audio
         const audioLoader = new AudioLoader();
         const listener = new AudioListener();
         this.muted = false;
