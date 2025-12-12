@@ -146,6 +146,10 @@ class Game {
                 const scoreboard = document.getElementById('score-board');
                 scoreboard.style.display = 'none';
 
+                // Hide sound button
+                const volume = document.getElementById('volume');
+                volume.style.display = 'none';
+
                 // Show end game screen
                 const overScreen = document.getElementById('game-over-screen');
                 overScreen.style.display = 'flex';
